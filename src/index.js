@@ -8,3 +8,6 @@ require('./context');
 
 // now start up WebGL app
 require('./startup')();
+
+const ws = require('./websockets');
+const gyro = require('./gyro');

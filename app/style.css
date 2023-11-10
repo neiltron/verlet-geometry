@@ -1,4 +1,18 @@
+@font-face {
+  font-family: "Replica Mono";
+  src: url("/replica.otf") format("otf");
+}
+
 body {
   margin: 0;
   overflow: hidden;
+  font-family: Replica Mono, helvetica;
+}
+
+
+h1 {
+  font-family: Replica Mono, helvetica;
+  font-family: replica;
+  z-index: 1000;
+  color: #fff;
 }

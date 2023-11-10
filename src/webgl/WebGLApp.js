@@ -45,16 +45,21 @@ module.exports = class WebGLApp extends EventEmitter {
     this.maxDeltaTime = defined(opt.maxDeltaTime, 1 / 30);
 
     // setup a basic camera
-    const fov = defined(opt.fov, 45);
-    const near = defined(opt.near, 0.01);
-    const far = defined(opt.far, 100);
-    this.camera = new THREE.PerspectiveCamera(fov, 1, near, far);
+    // const fov = defined(opt.fov, 45);
+    // const near = defined(opt.near, 0.01);
+    // const far = defined(opt.far, 100);
+
+    const width = defined(width, window.innerWidth);
+    const height = defined(height, window.innerHeight);
+
+    this.camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, -1000, 1000 );
 
     // set up a simple orbit controller
     this.controls = createOrbitControls(assign({
       element: this.canvas,
       parent: window,
-      distance: 4
+      distance: 4,
+      rotate: false,
     }, opt));
 
     this.time = 0;
@@ -63,6 +68,40 @@ module.exports = class WebGLApp extends EventEmitter {
     this._rafID = null;
 
     this.scene = new THREE.Scene();
+
+    // var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+    // directionalLight.castShadow = true;
+    // directionalLight.position.y += 100;
+    // directionalLight.position.z += 1;
+    // this.scene.add( directionalLight );
+
+
+    // var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+    // directionalLight.castShadow = true;
+    // directionalLight.position.y -= 100;
+    // directionalLight.position.z += 1;
+    // this.scene.add( directionalLight );
+
+    var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+    directionalLight.castShadow = true;
+    directionalLight.position.x += 10;
+    directionalLight.position.z += 10;
+    this.scene.add( directionalLight );
+
+
+    var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+    directionalLight.castShadow = true;
+    directionalLight.position.x -= 10;
+    directionalLight.position.z += 10;
+    this.scene.add( directionalLight );
+
+    var ambientLight = new THREE.AmbientLight( 0xffffff );
+    this.scene.add( ambientLight );
+
+    var light = new THREE.PointLight( 0xff0000, 10, .5 );
+    light.position.set( 0, 0, 0 );
+    light.castShadow = true;
+    this.scene.add( light );
 
     // handle resize events
     window.addEventListener('resize', () => this.resize());
@@ -131,7 +170,7 @@ module.exports = class WebGLApp extends EventEmitter {
 
     // recursively tell all child objects to update
     this.scene.traverse(obj => {
-      if (typeof obj.update === 'function') {
+      if (obj.parent && typeof obj.update === 'function') {
         obj.update(dt, time);
       }
     });
